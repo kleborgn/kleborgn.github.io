@@ -1,0 +1,4 @@
+baseURL = 'https://kleborgn.github.io/'
+languageCode = 'en-us'
+title = 'Personal page'
+theme = 'xterm'
