@@ -1,3 +1,8 @@
+---
+title: "Prechall FCSC 2023"
+date: 2023-11-10T16:29:19+01:00
+draft: false
+---
 # Pre-prechall
 
 J'ai vu sur Discord qu'il y avait un prechall bonus avant le début du CTF. J'ai cherché sur le site et dans le code source mais je n'ai rien trouvé. Je me suis demandé si il n'y avait pas déjà eu un challenge similaire les années précédentes et j'ai trouvé un writeup écrit par "Xenos" sur son [blog](https://blog.reinom.com/story/ctf/fcsc2022/welcome/prechall/).
@@ -8,11 +13,11 @@ A la fin du writeup, on peut voir que le flag était à soumettre à l'adresse h
 
 # Puzzle
 
-![[Pasted image 20230416151416.png]]
+![Puzzle](attachments/Pasted%20image%2020230416151416.png)
 
 On peut voir que l'image a été divisée par 4x11 blocs puis mélangée. En essayant d'assembler le texte, on peut deviner "FCSC 2023", "Challenge" et "LSB stegano". Effectivement, en passant l'image sur  [Aperi'Solve](aperisolve.com) ou `zsteg` on peut voir qu'il y a des données cachées: 
 
-![[Pasted image 20230416152130.png]]
+![AperiSolve](attachments/Pasted%20image%2020230416152130.png)
 
 ```
 **imagedata .. text:** "...222 "**  
@@ -28,7 +33,7 @@ b4,bgr,lsb,xy .. text:** "%3'gvwvweTDUUUTDTEETUDTB\"3#2UETEDETUEUFvETUTDEDFwvfv
 
 On voit que les données cachées ne sont pas continues et ont donc aussi été mélangées. J'ai donc commencé par ouvrir l'image sur Paint, numéroté tous les blocs puis j'ai résolu le puzzle:
 
-![[teaser_solved 1.png]]
+![Solved](attachments/teaser_solved%201.png)
 
 J'ai ensuite écrit un script Python pour remettre l'image dans l'ordre proprement:
 
@@ -98,7 +103,7 @@ final_image.show()
 
 Ce qui donne:
 
-![[output.png]]
+![Output](attachments/output.png)
 (sympa les costumes, ça doit pas être très pratique pour taper au clavier)
 
 En passant l'image dans `zsteg` on obtient:
@@ -134,7 +139,7 @@ zsteg -e b1,rgb,lsb,xy output.png > teaser2.png
 
 Le fichier est bien un PNG valide:
 
-![[teaser2.png]]
+![Teaser 2](attachments/teaser2.png)
 
 # Encore un puzzle
 
@@ -144,7 +149,7 @@ Maintenant on est habitué, on applique la même méthodologie.
 
 Comme pour le premier, on numérote les blocs et on le résout:
 
-![[teaser2_solved.png]]
+![Teaser 2 solved](attachments/teaser2_solved.png)
 
 ## Script
 
@@ -220,7 +225,7 @@ final_image.show()
 
 Résultat:
 
-![[fulloutput2.png]]
+![Result](attachments/fulloutput2.png)
 
 ## Stegano
 
@@ -321,9 +326,8 @@ if __name__ == "__main__":
 ### Static
 
 En l'ouvrant dans IDA, on peut voir qu'il n'y a pas beaucoup de fonctions:
-![[Pasted image 20230418131600.png]]
+![IDA](attachments/Pasted%20image%2020230418131600.png)
 
-(ajouter graph)
 
 Voici le pseudo-code généré pour la fonction `main`:
 
@@ -408,7 +412,7 @@ Mais certaines valeurs dans le stack (dont l'addresse est calculée à partir de
 
 Avant d'appeler `scanf`, le programme calcule quelque chose et place soit un '#' soit un ' ' dans le stack. Ce calcul est réalisé à partir de ces valeurs:
 
-![[Pasted image 20230418141607.png]]
+![IDA 2](attachments/Pasted%20image%2020230418141607.png)
 
 J'ai essayé de reproduire ce calcul en Python, sans succès. Il y a quelque chose que je ne dois pas bien comprendre.
 
@@ -418,11 +422,11 @@ Essayons d'obtenir le résultat en faisant une analyse dynamique.
 
 Je place un breakpoint à la fin des deux boucles `for`:
 
-![[Pasted image 20230418170132.png]]
+![dbg](attachments/Pasted%20image%2020230418170132.png)
 
 On exécute le programme, on atteint le BP et dans le stack on obtient:
 
-![[Pasted image 20230418142826.png]]
+![dbg2](attachments/Pasted%20image%2020230418142826.png)
 
 On a un ensemble de '#' et d'espaces qui semblent former un labyrinthe! Maintenant il faut le mettre en forme, le résoudre et écrire la suite de "mouvements" à réaliser pour aller du coin supérieur gauche au coin inférieur droit.
 
@@ -518,7 +522,7 @@ Ce qui nous donne:
 
 Pour plus de visibilité, j'ai remplacé les '#' et les espaces par des emojis carrés noir et blanc puis j'ai résolu le labyrinthe:
 
-![[Screenshot 2023-04-16 133236.png]]
+![lab](attachments/Screenshot%202023-04-16%20133236.png)
 
 Les chemins rouges sont des essais, le chemin vert est le plus court pour résoudre le labyrinthe. En faisant le chemin avec une lettre pour un mouvement d'une case, on obtient:
 
@@ -528,7 +532,7 @@ RDDDDDDDDDRRDDDDDDRRDDRRRRDDRRRRRRRRDDLLDDRRDDDDDDLLDDDDRRRRRRUURRRRRRRRUUUURRDD
 
 Et cela fonctionne:
 
-![[Pasted image 20230418145025.png]]
+![flag](attachments/Pasted%20image%2020230418145025.png)
 
 Le flag est donc: `FCSC{5cf9940286533f76743984b95c8edede9dbfde6226de012b8fe84e15f2d35e83}`.
 
